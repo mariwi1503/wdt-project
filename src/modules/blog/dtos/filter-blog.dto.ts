@@ -7,4 +7,7 @@ export class FilterBlogDto {
 
     @IsOptional()
     status: Status
+
+    @IsOptional()
+    genre_id: number
 }

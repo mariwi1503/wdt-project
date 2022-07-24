@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashPassword, ValidatePassword } from 'src/shared/utils/bcrypt';
 import { Repository } from 'typeorm';
-import { User, User_status } from '../user/entities/user.entity';
+import { User, User_role, User_status } from '../user/entities/user.entity';
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
 
@@ -32,6 +32,8 @@ export class AuthService {
 
             // set default status to active
             new_user.status = User_status.active
+            // user default role is user
+            new_user.role = User_role.user
 
             await this.authRepository.save(new_user)
 

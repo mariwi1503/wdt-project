@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Genre } from "src/modules/genre/entities/genre.entity";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum Status {
     "draft" = "draft",
@@ -19,6 +20,12 @@ export class Blog {
 
     @Column({ type: 'enum', enum: Status})
     status: Status
+
+    @ManyToMany((type) => Genre, (genres) => genres.blogs, {
+        cascade: ['insert'],
+    })
+    @JoinTable()
+    genres: Genre[]
 
     @CreateDateColumn()
     created_at: Date

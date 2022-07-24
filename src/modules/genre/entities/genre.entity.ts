@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Blog } from "src/modules/blog/entities/blog.entity";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Genre {
@@ -9,5 +10,9 @@ export class Genre {
     title: string;
 
     @Column()
-    description: string
+    description: string;
+
+    @ManyToMany((type) => Blog, (blog) => blog.genres)
+    blogs: Blog[]
+
 }

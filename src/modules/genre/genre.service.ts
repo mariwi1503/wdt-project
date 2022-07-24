@@ -88,7 +88,11 @@ export class GenreService {
 
     async getGenreDetail(id: number) {
         try {
-            let result = await this.genreRepository.findOne({ where: {id}})
+            let query = this.genreRepository.createQueryBuilder('genre')
+            query.leftJoinAndSelect('genre.blogs', 'blogs')
+            query.andWhere('genre.id = :id', {id})
+
+            let result = await query.getOne()
             if(!result) throw new BadRequestException('Data tidak ditemukan')
 
             return {

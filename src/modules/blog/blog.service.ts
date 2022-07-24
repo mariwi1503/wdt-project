@@ -16,29 +16,29 @@ export class BlogService {
 
     async getBlogs(filterBlogDto: FilterBlogDto) {
         try {
-            // let { status, topic_id } = filterNewsDto
-            // let query = this.newsRepository.createQueryBuilder('news')
-            // query.leftJoinAndSelect('news.topics', 'topics')
+            let { title, status, genre_id } = filterBlogDto
+            let query = this.blogRepository.createQueryBuilder('blog')
+            query.leftJoinAndSelect('blog.genres', 'genres')
 
-            // if(status) {
-            //     query.andWhere('news.status = :status', {status: status.toLocaleLowerCase()})
-            // }
+            if(title) {
+                query.andWhere('lower(blog.title LIKE :title', {
+                    title: `%${title.toLowerCase()}%`
+                })
+            }
 
-            // if(topic_id) {
-            //     query.andWhere('topics.id = :id', {id: topic_id})
-            // }
+            if(status) {
+                query.andWhere('blog.status = :status', {status: status.toLocaleLowerCase()})
+            }
 
-            // let result = await query.getMany()
-            // if(result.length < 1) throw new BadRequestException('Data tidak ditemukan')
-            // return {
-            //     status: 'success',
-            //     data: result
-            // }
+            if(genre_id) {
+                query.andWhere('genre.id = :id', {id: genre_id})
+            }
 
-            let blogs = await this.blogRepository.find()
+            let result = await query.getMany()
+            if(result.length < 1) throw new BadRequestException('Data tidak ditemukan')
             return {
                 status: 'success',
-                data: blogs
+                data: result
             }
         } catch (error) {
             return {
@@ -51,6 +51,7 @@ export class BlogService {
     async getById(id: number) {
         try {
             let query = this.blogRepository.createQueryBuilder('blog')
+            query.leftJoinAndSelect('blog.genres', 'genres')
             query.andWhere('blog.id = :id', {id})
 
             let result = await query.getOne()
@@ -69,18 +70,18 @@ export class BlogService {
 
     async createBlog(createBlogDto: CreateBlogDto) {
         try {
-            let { title, content, status = Status.draft } = createBlogDto
-            // let genres = []
-            // // if(genre_ids && genre_ids.length > 0) {
-            // //     genre_ids.map((x) => {
-            // //         genres.push({id: x})
-            // //     })
-            // // }
+            let { title, content, status = Status.draft, genre_ids } = createBlogDto
+            let genres = []
+            if(genre_ids && genre_ids.length > 0) {
+                genre_ids.map((x) => {
+                    genres.push({id: x})
+                })
+            }
             let blog = new Blog()
             blog.title = title
             blog.content = content
             blog.status = status
-            // blog.genres = genres
+            blog.genres = genres
 
             await this.dataSource.manager.save(blog)
             return {

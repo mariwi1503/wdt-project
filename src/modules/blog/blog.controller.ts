@@ -12,7 +12,7 @@ export class BlogController {
         private blogservice: BlogService
     ) {}
 
-    @Get()
+    @Get('filter')
     async getNews(@Body() filterBlogDto: FilterBlogDto) {
         return this.blogservice.getBlogs(filterBlogDto)
     }

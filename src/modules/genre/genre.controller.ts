@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { JwtGuard } from 'src/guard/jwt.guard';
 import { CreateGenreDto } from './dtos/create-genre.dto';
 import { UpdateGenreDto } from './dtos/update-genre.dto';
@@ -32,7 +32,8 @@ export class GenreController {
     }
 
     @Delete('delete/:id')
-    async delete(@Param('id') id: number) {
-        return this.genreServie.deleteGenre(id)
+    async delete(@Param('id') id: number, @Req() req) {
+        let role: string = req.user.role
+        return role == 'admin' ? this.genreServie.deleteGenre(id) : new UnauthorizedException('Admin Only')
     }
 }

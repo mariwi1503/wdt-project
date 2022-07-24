@@ -12,5 +12,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     rejectUnauthorized: false
   },
   port: 5432,
-  // synchronize: true,
+  synchronize: true,
 };

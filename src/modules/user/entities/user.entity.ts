@@ -5,6 +5,11 @@ export enum User_status {
     "banned" = "banned"
 }
 
+export enum User_role {
+    "user" = "user",
+    "admin" = "admin"
+}
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
@@ -21,6 +26,9 @@ export class User {
 
     @Column({type: 'enum', enum: User_status})
     status: User_status
+
+    @Column({type: 'enum', enum: User_role})
+    role: User_role
 
     @CreateDateColumn()
     created_at: Date

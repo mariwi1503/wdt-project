@@ -12,4 +12,7 @@ export class CreateBlogDto {
 
     @IsOptional()
     status: Status
+
+    @IsOptional()
+    genre_ids: []
 }
