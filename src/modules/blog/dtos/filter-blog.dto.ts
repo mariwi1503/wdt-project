@@ -1,4 +1,4 @@
-import { IsOptional } from "class-validator"
+import { IsNotEmpty, IsNumber, IsOptional } from "class-validator"
 import { Status } from "../entities/blog.entity"
 
 export class FilterBlogDto {
@@ -10,4 +10,11 @@ export class FilterBlogDto {
 
     @IsOptional()
     genre_id: number
+
+    @IsOptional()
+    limit: number
+
+    @IsNotEmpty()
+    @IsNumber()
+    page: number
 }

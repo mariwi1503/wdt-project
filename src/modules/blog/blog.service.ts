@@ -16,7 +16,7 @@ export class BlogService {
 
     async getBlogs(filterBlogDto: FilterBlogDto) {
         try {
-            let { title, status, genre_id } = filterBlogDto
+            let { title, status, genre_id, page, limit = 5 } = filterBlogDto
             let query = this.blogRepository.createQueryBuilder('blog')
             query.leftJoinAndSelect('blog.genres', 'genres')
 
@@ -34,6 +34,9 @@ export class BlogService {
                 query.andWhere('genre.id = :id', {id: genre_id})
             }
 
+            // pagination
+            query.skip((page - 1) * limit ).take(limit)
+            .orderBy({'blog.id': 'DESC'}).getManyAndCount();
             let result = await query.getMany()
             if(result.length < 1) throw new BadRequestException('Belum ada blog')
             return {
