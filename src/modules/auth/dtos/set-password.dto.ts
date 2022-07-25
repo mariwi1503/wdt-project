@@ -1,4 +1,5 @@
 import { IsNotEmpty, Length, MinLength } from "class-validator";
+import { IsPhoneNumber } from "src/shared/utils/validation";
 
 export class SetNewPasswordDto {
     @IsNotEmpty()
@@ -6,7 +7,7 @@ export class SetNewPasswordDto {
     code: string
 
     @IsNotEmpty()
-    @MinLength(10)
+    @IsPhoneNumber()
     phone: string
 
     @IsNotEmpty()

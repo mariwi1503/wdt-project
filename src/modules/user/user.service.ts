@@ -20,6 +20,7 @@ export class UserService {
     async updateUser(payload: UpdateUserDto, id: number) {
         try {
             let { fullname, phone } = payload
+            phone = phone.replace(/(\+62|62)/, '0')
             let new_data: UpdateUserDto;
 
             if(fullname) new_data.fullname = fullname
@@ -38,7 +39,6 @@ export class UserService {
 
     async deleteUser(id: number) {
         try {
-            console.log(id)
             await this.userRepository.delete({id})
             return {
                 status: 'success'

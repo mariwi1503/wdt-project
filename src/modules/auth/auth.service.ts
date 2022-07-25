@@ -26,7 +26,7 @@ export class AuthService {
     async signUp(signUpDto: SignupDto) {
         try {
             let { fullname, phone, password } = signUpDto
-
+            phone = phone.replace(/(\+62|62)/, '0')
             let user = await this.authRepository.findOne({where: {phone}})
             if(user) throw new BadRequestException('Nomor sudah terdaftar')
 
@@ -60,6 +60,7 @@ export class AuthService {
     async login(loginDto: LoginDto) {
         try {
             let { phone, password } = loginDto
+            phone = phone.replace(/(\+62|62)/, '0')
             let user = await this.authRepository.findOne({where: {phone}})
             if(!user) throw new BadRequestException('Nomor telephone belum terdaftar')
 
@@ -88,7 +89,7 @@ export class AuthService {
     async sendOtp(sendOtp: SendOtpDto) {
         try {
             let { phone, platform } = sendOtp
-
+            phone = phone.replace(/(\+62|62)/, '0')
             let user = await this.authRepository.findOne({where: {phone}})
             if(!user) throw new BadRequestException('Nomor telephone belum terdaftar')
             // generate token
@@ -113,6 +114,7 @@ export class AuthService {
     async forgotPassword(payload: SetNewPasswordDto) {
         try {
             let { code, phone, new_password } = payload
+            phone = phone.replace(/(\+62|62)/, '0')
             let user = await this.authRepository.findOne({ where: {phone}})
             if(!user) throw new BadRequestException('Nomor telephone belum terdaftar')
 
