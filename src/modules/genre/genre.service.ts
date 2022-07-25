@@ -18,7 +18,7 @@ export class GenreService {
             let result = await this.genreRepository.find()
             return {
                 status: 'success',
-                data: result.length > 0 ? result : 'Belum ada Blog'
+                data: result.length > 0 ? result : 'Belum ada genre'
             }
             
         } catch (error) {

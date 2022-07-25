@@ -35,7 +35,7 @@ export class BlogService {
             }
 
             let result = await query.getMany()
-            if(result.length < 1) throw new BadRequestException('Data tidak ditemukan')
+            if(result.length < 1) throw new BadRequestException('Belum ada blog')
             return {
                 status: 'success',
                 data: result
