@@ -16,10 +16,9 @@ export class GenreService {
     async getAllGenre() {
         try {
             let result = await this.genreRepository.find()
-            result = result.length > 0 ? result : null
             return {
                 status: 'success',
-                data: result
+                data: result.length > 0 ? result : 'Belum ada Blog'
             }
             
         } catch (error) {
