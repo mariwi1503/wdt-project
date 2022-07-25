@@ -2,10 +2,18 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HashPassword, ValidatePassword } from 'src/shared/utils/bcrypt';
+import { Otp } from 'src/shared/utils/otp';
 import { Repository } from 'typeorm';
 import { User, User_role, User_status } from '../user/entities/user.entity';
 import { LoginDto } from './dtos/login.dto';
+import { SendOtpDto } from './dtos/send-otp.dto';
 import { SignupDto } from './dtos/signup.dto';
+import { SetNewPasswordDto } from './dtos/set-password.dto';
+
+export enum Platform {
+    "whatsapp" = "whatsapp",
+    "sms" = "sms"
+}
 
 @Injectable()
 export class AuthService {
@@ -77,4 +85,57 @@ export class AuthService {
         }
     }
 
+    async sendOtp(sendOtp: SendOtpDto) {
+        try {
+            let { phone, platform } = sendOtp
+
+            let user = await this.authRepository.findOne({where: {phone}})
+            if(!user) throw new BadRequestException('Nomor telephone belum terdaftar')
+            // generate token
+            let otp_code = Otp.GenerateToken(4)
+            await this.authRepository.update({id: user.id}, {temp_otp: otp_code})
+
+            // untuk sekarang otp di keluarin di respons karena tidak punya akun twillio
+            return {
+                status: 'success',
+                send_via: platform,
+                otp: otp_code
+            }
+        
+        } catch (error) {
+            return {
+                status: 'failed',
+                message: error.message
+            }
+        }
+    }
+
+    async forgotPassword(payload: SetNewPasswordDto) {
+        try {
+            let { code, phone, new_password } = payload
+            let user = await this.authRepository.findOne({ where: {phone}})
+            if(!user) throw new BadRequestException('Nomor telephone belum terdaftar')
+
+            let verified = await this.verifyOtp(code, user.temp_otp)
+            if(!verified) throw new BadRequestException('Code otp salah')
+
+            let hashedPassword: string = HashPassword(new_password)
+
+            // set new password and set temp_otp to null
+            await this.authRepository.update({id: user.id}, {password: hashedPassword, temp_otp: null})
+
+            return {
+                status: 'success'
+            }
+        } catch (error) {
+            return {
+                status: 'failed',
+                message: error.message
+            }
+        }
+    }
+
+    async verifyOtp(otp: string, temp_otp: string) {
+        return otp == temp_otp ? true : false
+    }
 }

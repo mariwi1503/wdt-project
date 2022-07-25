@@ -30,6 +30,9 @@ export class User {
     @Column({type: 'enum', enum: User_role})
     role: User_role
 
+    @Column({ default: null })
+    temp_otp: string
+
     @CreateDateColumn()
     created_at: Date
 
